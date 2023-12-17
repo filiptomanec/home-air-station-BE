@@ -8,19 +8,28 @@ import {Sensor} from "./sensor/entities/sensor.entity";
 import {SensorModule} from "./sensor/sensor.module";
 import { MeasurementModule } from './measurement/measurement.module';
 import {Measurement} from "./measurement/entities/measurement.entity";
+import {ConfigModule, ConfigService} from "@nestjs/config";
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type: 'postgres',
-            host: 'localhost',
-            port: 5432,
-            password: 'postgres',
-            username: 'postgres',
-            entities: [User, Sensor, Measurement],
-            database: 'HomeStation',
-            synchronize: true,
-            logging: true,
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.env.${process.env.NODE_ENV}`,
+        }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.get<string>('DB_HOST'),
+                port: configService.get<number>('DB_PORT'),
+                username: configService.get<string>('DB_USER'),
+                password: configService.get<string>('DB_PASS'),
+                database: configService.get<string>('DB_NAME'),
+                entities: [User, Sensor, Measurement],
+                synchronize: true,
+                logging: true,
+            }),
+            inject: [ConfigService],
         }),
         SensorModule,
         UserModule,
