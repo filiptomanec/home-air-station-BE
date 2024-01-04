@@ -10,6 +10,8 @@ async function bootstrap() {
         .setTitle('Home Air Quality Tracker')
         .setDescription('This backend service is built using NestJS and utilizes a PostgreSQL database, offering a robust and scalable solution for handling data related to air quality monitoring in your home. It supports the frontend React application by providing APIs for real-time and historical data on air quality in various rooms.')
         .setVersion('1.0')
+        .addBearerAuth()
+        .addSecurityRequirements('bearer')
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

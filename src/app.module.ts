@@ -9,6 +9,7 @@ import {SensorModule} from "./sensor/sensor.module";
 import { MeasurementModule } from './measurement/measurement.module';
 import {Measurement} from "./measurement/entities/measurement.entity";
 import {ConfigModule, ConfigService} from "@nestjs/config";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -26,14 +27,15 @@ import {ConfigModule, ConfigService} from "@nestjs/config";
                 password: configService.get<string>('DB_PASS'),
                 database: configService.get<string>('DB_NAME'),
                 entities: [User, Sensor, Measurement],
-                synchronize: false,
+                synchronize: true,
                 logging: true,
             }),
             inject: [ConfigService],
         }),
         SensorModule,
         UserModule,
-        MeasurementModule
+        MeasurementModule,
+        AuthModule
     ],
     controllers: [AppController],
     providers: [AppService],
